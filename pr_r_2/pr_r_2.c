@@ -1,4 +1,8 @@
-﻿#include <stdio.h>
+﻿/*
+Удалить обычные файлы (regular file), имя которых содержит символ ~ в случае, если длина их равна 0.
+*/
+
+#include <stdio.h>
 #include <windows.h>
 #include <fileapi.h>
 #include <string.h>
