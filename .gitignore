@@ -1,1 +1,9 @@
 a.out
+*/.vscode
+*/Debug/
+*/x64/
+*/*.vcxproj*
+*/*.sln
+*/*.swp
+*/*.rar
+*/.vs/
