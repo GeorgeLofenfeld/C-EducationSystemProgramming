@@ -16,7 +16,7 @@ struct Res {
     char name[256];
 };
 
-char* list_file(const char* dirname, struct Res* res) {
+int list_file(const char* dirname, struct Res* res) {
 	DIR* dir;
     struct dirent *item;
     struct stat file;
@@ -67,6 +67,7 @@ char* list_file(const char* dirname, struct Res* res) {
         res->size = cur_dir_size;
         strcpy(res->name, dirname); 
     };
+    return 0;
 };
 
 
