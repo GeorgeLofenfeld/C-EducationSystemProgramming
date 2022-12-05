@@ -43,14 +43,34 @@ int list_file(const char* dirname, struct Res* res) {
                 cur_dir_size += file.st_size;
                 }
 		    if ((item->d_type == DT_DIR && strcmp(item->d_name, ".") != 0) && (strcmp(item->d_name, "..") != 0)) {
-                printf("Find dir: %s\n", item->d_name);
-                printf("Open directory: %s\n", item->d_name);
-			    char path[256] = {0};
-			    strcat(path, dirname);
-			    strcat(path, "/");
-		    	strcat(path, item->d_name);
-                list_file(path, res);
+                int fd[2] = { 0 };
+                pipe(fd);
+                int pid = fork();
+                if (pid == 0) {
+                    printf("Creating child proccess %d\n", getpid());
+                    printf("My parent: %d\n", getppid());
+                    printf("Find dir: %s\n", item->d_name);
+                    printf("Open directory: %s\n", item->d_name);
+			        char path[256] = {0};
+			        strcat(path, dirname);
+			        strcat(path, "/");
+		    	    strcat(path, item->d_name);
+                    list_file(path, res);
+                    open(fd[1]);
+                    write(fd[1], res, sizeof(res));
+                    exit(&pid);
+                } else if (pid < 0) {
+                    perror("ERROR: Cant creating proccess\n");
+                    return 1;
                 };
+                if (pid > 0) {
+                    close(fd[1]);
+                    read(fd[0], res, sizeof(res));
+                    printf("This is a parent proccess %d\n", getpid());
+                    printf("Waiting my child %d\n", pid);
+                    wait(&pid); 
+                }
+            };
 		    item = readdir(dir);
 		    errno = 0; 
 		    if ( (item == NULL) && (errno != 0)) {
@@ -67,6 +87,9 @@ int list_file(const char* dirname, struct Res* res) {
         res->size = cur_dir_size;
         strcpy(res->name, dirname); 
     };
+
+    
+
     return 0;
 };
 
