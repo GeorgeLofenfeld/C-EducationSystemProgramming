@@ -45,7 +45,10 @@ int list_file(const char* dirname, struct Res* res) {
                 }
 		    if ((item->d_type == DT_DIR && strcmp(item->d_name, ".") != 0) && (strcmp(item->d_name, "..") != 0)) {
                 int fd[2] = { 0 };
-                pipe(fd);
+                if (pipe(fd) < 0 ) {
+                    perror("ERROR: Can't create pipe()");
+                    return 1;
+                };
                 int pid = fork();
                 if (pid == 0) {
                     printf("Creating child proccess %d\n", getpid());
