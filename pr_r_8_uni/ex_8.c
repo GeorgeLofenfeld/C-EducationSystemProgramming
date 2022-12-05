@@ -5,6 +5,8 @@
 Реализовать используя pipe();
 */
 
+#define BUFF 300
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
@@ -61,7 +63,7 @@ int list_file(const char* dirname, struct Res* res) {
 		    	    strcat(path, item->d_name);
                     list_file(path, res);
                     open(fd[1]);
-                    write(fd[1], res, sizeof(res));
+                    write(fd[1], res, BUFF);
                     exit(&pid);
                 } else if (pid < 0) {
                     perror("ERROR: Cant creating proccess\n");
@@ -69,7 +71,7 @@ int list_file(const char* dirname, struct Res* res) {
                 };
                 if (pid > 0) {
                     close(fd[1]);
-                    read(fd[0], res, sizeof(res));
+                    read(fd[0], res, BUFF);
                     printf("This is a parent proccess %d\n", getpid());
                     printf("Waiting my child %d\n", pid);
                     wait(&pid); 
@@ -91,9 +93,6 @@ int list_file(const char* dirname, struct Res* res) {
         res->size = cur_dir_size;
         strcpy(res->name, dirname); 
     };
-
-    
-
     return 0;
 };
 
